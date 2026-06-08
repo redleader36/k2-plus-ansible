@@ -1,0 +1,38 @@
+---
+- name: Restore R3men Graphite Bed Configs After Firmware Update
+  hosts: k2_plus
+  gather_facts: false
+  vars:
+    # Target directory path on stock Creality OS filesystem
+    config_dir: "/usr/data/printer_data/config"
+
+  tasks:
+    - name: Inject custom R3men thermistor definition block
+      ansible.builtin.blockinfile:
+        path: "{{ config_dir }}/printer.cfg"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: R3MEN THERMISTOR"
+        insertbefore: '^\[heater_bed\]'
+        block: |
+          [thermistor R3men_bed]
+          temperature1: 25
+          resistance1: 100000
+          temperature2: 97
+          resistance2: 1385
+          temperature3: 248
+          resistance3: 165
+
+    - name: Update heater_bed sensor type to use custom curve
+      ansible.builtin.replace:
+        path: "{{ config_dir }}/printer.cfg"
+        regexp: '(?<=^\[heater_bed\]\n(?:.*\n)*?)sensor_type:.*'
+        replace: 'sensor_type: R3men_bed'
+
+    - name: Enforce 110-120v power limitation constraint (max_power 0.8)
+      ansible.builtin.lineinfile:
+        path: "{{ config_dir }}/printer.cfg"
+        line: "max_power: 0.8"
+        insertafter: '^\[heater_bed\]'
+        state: present
+
+    - name: Cycle the Klipper service layer to parse config adjustments
+      ansible.builtin.raw: "restart"
