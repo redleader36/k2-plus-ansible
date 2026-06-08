@@ -34,5 +34,12 @@
         insertafter: '^\[heater_bed\]'
         state: present
 
+    - name: Automate Z_TILT_ADJUST immediately after Z homing
+      ansible.builtin.lineinfile:
+        path: "{{ config_dir }}/sensorless.cfg"
+        line: "    Z_TILT_ADJUST"
+        insertafter: '^\s*G28\s+Z'
+        state: present
+
     - name: Cycle the Klipper service layer to parse config adjustments
       ansible.builtin.raw: "restart"
