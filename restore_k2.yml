@@ -62,5 +62,14 @@
         insertafter: '^\[include motor_control.cfg\]'
         state: present
 
+    - name: Inject Manual Z-Offset hook into START_PRINT macro
+      ansible.builtin.replace:
+        path: "{{ config_dir }}/gcode_macro.cfg"
+        regexp: '(^\[gcode_macro START_PRINT\]\n(?:.*\n)*?\s+G28(?: Z)?\n)'
+        replace: |
+          \1
+              # Injected by Ansible for custom Z-offset calibration
+              manual_z_offset
+
     - name: Cycle the Klipper service layer to parse config adjustments
       ansible.builtin.raw: "restart"
