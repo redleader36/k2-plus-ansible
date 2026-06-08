@@ -24,8 +24,8 @@
     - name: Update heater_bed sensor type to use custom curve
       ansible.builtin.replace:
         path: "{{ config_dir }}/printer.cfg"
-        regexp: '(?<=^\[heater_bed\]\n(?:.*\n)*?)sensor_type:.*'
-        replace: 'sensor_type: R3men_bed'
+        regexp: '(^\[heater_bed\]\n(?:.*\n)*?sensor_type:\s*).*'
+        replace: '\1R3men_bed'
 
     - name: Enforce 110-120v power limitation constraint (max_power 0.8)
       ansible.builtin.lineinfile:
