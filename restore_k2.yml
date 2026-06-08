@@ -63,13 +63,10 @@
         state: present
 
     - name: Inject Manual Z-Offset hook into START_PRINT macro
-      ansible.builtin.replace:
+      ansible.builtin.lineinfile:
         path: "{{ config_dir }}/gcode_macro.cfg"
-        regexp: '(^\[gcode_macro START_PRINT\]\n(?:.*\n)*?\s+G28(?: Z)?\n)'
-        replace: |
-          \1
-              # Injected by Ansible for custom Z-offset calibration
-              manual_z_offset
+        line: "  MANUAL_Z_OFFSET"
+        insertafter: '^  SET_PIN PIN=extruder_fan VALUE=1'
 
     - name: Download additional_settings.cfg from GitHub
       ansible.builtin.get_url:
