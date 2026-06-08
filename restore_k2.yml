@@ -37,7 +37,7 @@
     - name: Automate Z_TILT_ADJUST immediately after Z homing
       ansible.builtin.lineinfile:
         path: "{{ config_dir }}/sensorless.cfg"
-        line: "    Z_TILT_ADJUST"
+        line: "  Z_TILT_ADJUST"
         insertafter: '^\s*G28\s+Z'
         state: present
 
