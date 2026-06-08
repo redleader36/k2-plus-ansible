@@ -71,5 +71,17 @@
               # Injected by Ansible for custom Z-offset calibration
               manual_z_offset
 
+    - name: Download additional_settings.cfg from GitHub
+      ansible.builtin.get_url:
+        url: "https://raw.githubusercontent.com/TheIncompetentCraftsman/Creality_K2_Plus_1.1.4.11/main/additional_settings.cfg"
+        dest: "{{ config_dir }}/additional_settings.cfg"
+        mode: '0644'
+
+    - name: Inject my personal Z-offset into additional_settings
+      ansible.builtin.replace:
+        path: "{{ config_dir }}/additional_settings.cfg"
+        regexp: 'SET_GCODE_OFFSET\s+Z=.*'
+        replace: 'SET_GCODE_OFFSET Z={{ my_z_offset }}'
+
     - name: Cycle the Klipper service layer to parse config adjustments
       ansible.builtin.raw: "restart"
