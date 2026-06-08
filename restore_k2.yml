@@ -49,5 +49,18 @@
         insertafter: '^\s*G28\s+Z'
         state: present
 
+    - name: Download additional_settings.cfg from GitHub
+      ansible.builtin.get_url:
+        url: "https://raw.githubusercontent.com/TheIncompetentCraftsman/Creality_K2_Plus_1.1.4.11/main/additional_settings.cfg"
+        dest: "{{ config_dir }}/additional_settings.cfg"
+        mode: '0644'
+
+    - name: Inject include line for additional_settings into printer.cfg
+      ansible.builtin.lineinfile:
+        path: "{{ config_dir }}/printer.cfg"
+        line: "[include additional_settings.cfg]"
+        insertafter: '^\[include motor_control.cfg\]'
+        state: present
+
     - name: Cycle the Klipper service layer to parse config adjustments
       ansible.builtin.raw: "restart"
