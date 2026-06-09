@@ -81,4 +81,4 @@
         replace: 'SET_GCODE_OFFSET Z={{ my_z_offset }}'
 
     - name: Cycle the Klipper service layer to parse config adjustments
-      ansible.builtin.raw: "restart"
+      ansible.builtin.shell: "service klipper restart"
